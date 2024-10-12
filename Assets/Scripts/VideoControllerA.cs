@@ -12,6 +12,7 @@ public class VideoControllerA : MonoBehaviour
     public Button nextButton, prevButton;
     public TMP_Text currentMinutes, currentSeconds;
     public TMP_Text TotalMinutes, TotalSeconds;
+    public TMP_Text Title;
     private Animation UIAnim;
     public VideoClip[] videoClips;
     [SerializeField] private int videoClipIndex=0;
@@ -21,15 +22,21 @@ public class VideoControllerA : MonoBehaviour
     {
         videoPlayer = GetComponent<VideoPlayer>();
         UIAnim = UIPanel.GetComponent<Animation>();
+        Title.text = videoClips[videoClipIndex].name;
+        
     }
-    
+    // float a,b;
     void Update()
     {
+        
+        // videoPlayer.time = progressBar.value;
+        Debug.Log(videoPlayer.canSetTime);
         if(videoPlayer.isPlaying)
         {
             SetCurrentTime();
             SetTotalTime();
-            SetTotalTime();
+            SetProgressBar();
+
         }
         if(videoClipIndex <= 0)
         {
@@ -62,11 +69,13 @@ public class VideoControllerA : MonoBehaviour
         }
         if(Input.GetMouseButton(0))
         {
-            UIAnim.Play("fadein");
+
+            UIAnim.Play("fadehold");
             UIPanel.SetActive(true);
             elapseTime = 4f;
         }
     }
+    // void SetVideoTime
     void SetCurrentTime()
     {
 
@@ -90,15 +99,16 @@ public class VideoControllerA : MonoBehaviour
         if(videoPlayer.isPlaying)
         {
             videoPlayer.Pause();
+            
         }
         else{
             videoPlayer.Play();
+           
         }
 
     }
     public void SetNextClip()
     {
-        Debug.Log("++1");
         
         if(videoClipIndex >= videoClips.Length)
         {
@@ -110,10 +120,10 @@ public class VideoControllerA : MonoBehaviour
         }
         videoPlayer.clip = videoClips[videoClipIndex];
         videoPlayer.Play();
+        Title.text = videoClips[videoClipIndex].name;
     }
     public void SetPreviousClip()
     {
-        Debug.Log("--1");
         if(videoClipIndex < 0)
         {
             videoClipIndex = 0;
@@ -123,7 +133,19 @@ public class VideoControllerA : MonoBehaviour
         }
         videoPlayer.clip = videoClips[videoClipIndex];
         videoPlayer.Play();
+        Title.text = videoClips[videoClipIndex].name;
         
+    }
+
+    public void SetProgressBar()
+    {
+        progressBar.maxValue = (float) videoPlayer.clip.length;
+        progressBar.value = (float) videoPlayer.time;
+    }
+    public void SProgressBar()
+    {
+        videoPlayer.time = progressBar.value;
+        videoPlayer.Play();
     }
 
 }
