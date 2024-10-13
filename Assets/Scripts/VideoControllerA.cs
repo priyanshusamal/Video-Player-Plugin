@@ -17,6 +17,7 @@ public class VideoControllerA : MonoBehaviour
     public VideoClip[] videoClips;
     [SerializeField] private int videoClipIndex=0;
     private VideoPlayer videoPlayer;
+    [SerializeField] private VideoPlayer previewVideo;
     [SerializeField]private float elapseTime = 4f;
     void Awake()
     {
@@ -119,6 +120,7 @@ public class VideoControllerA : MonoBehaviour
             videoClipIndex++;
         }
         videoPlayer.clip = videoClips[videoClipIndex];
+        previewVideo.clip = videoClips[videoClipIndex];
         videoPlayer.Play();
         Title.text = videoClips[videoClipIndex].name;
     }
@@ -132,6 +134,7 @@ public class VideoControllerA : MonoBehaviour
             videoClipIndex--;
         }
         videoPlayer.clip = videoClips[videoClipIndex];
+        previewVideo.clip = videoClips[videoClipIndex];
         videoPlayer.Play();
         Title.text = videoClips[videoClipIndex].name;
         
@@ -147,5 +150,11 @@ public class VideoControllerA : MonoBehaviour
         videoPlayer.time = progressBar.value;
         videoPlayer.Play();
     }
-
+    
+    public void SetFramePreview()
+    {
+        int a = (int) progressBar.value;
+        Debug.Log(a);
+        previewVideo.time = a;
+    }
 }
