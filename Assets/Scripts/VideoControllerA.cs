@@ -18,6 +18,9 @@ public class VideoControllerA : MonoBehaviour
     private Animation UIAnim;
 
     public VideoClip[] videoClips;
+    public string[] Url;
+    public float videoTimeDutation = 0;
+    [SerializeField] private int UrlClipIndex=0;
     [SerializeField] private int videoClipIndex=0;
     private VideoPlayer videoPlayer;
     [SerializeField] private VideoPlayer previewVideo;
@@ -31,16 +34,24 @@ public class VideoControllerA : MonoBehaviour
     {
         videoPlayer = GetComponent<VideoPlayer>();
         UIAnim = UIPanel.GetComponent<Animation>();
-        Title.text = videoClips[videoClipIndex].name;
+        // Title.text = videoClips[videoClipIndex].name;
         videoplayerMode = true;
         videoplayerLock = false;
+        // if(videoPlayer)
+        // {
+        //     videoPlayer.url = Url[UrlClipIndex];
+        //     videoPlayer.playOnAwake = false;
+        //     videoPlayer.Prepare();
+
+        //     videoPlayer.prepareCompleted += OnvideoPrepared;
+        // }
     }
+
     // float a,b;
     void Update()
     {
         
         // videoPlayer.time = progressBar.value;
-        Debug.Log(videoPlayer.canSetTime);
         if(videoPlayer.isPlaying)
         {
             SetCurrentTime();
@@ -48,12 +59,12 @@ public class VideoControllerA : MonoBehaviour
             SetProgressBar();
 
         }
-        if(videoClipIndex <= 0)
+        if(UrlClipIndex <= 0)
         {
             prevButton.gameObject.SetActive(false);
         }else{prevButton.gameObject.SetActive(true);}
 
-        if(videoClipIndex >= videoClips.Length-1)
+        if(UrlClipIndex >= Url.Length-1)
         {
             nextButton.gameObject.SetActive(false);
         }else{nextButton.gameObject.SetActive(true);}
@@ -92,8 +103,8 @@ public class VideoControllerA : MonoBehaviour
     // void SetVideoTime
     void SetCurrentTime()
     {
-
-        string minutes = Mathf.Floor((int) videoPlayer.time / 60).ToString("00");
+        
+        string minutes = Mathf.Floor((int) (videoPlayer.time) / 60).ToString("00");
         string seconds = ((int) videoPlayer.time % 60).ToString("00");
         
         currentMinutes.text = minutes;
@@ -102,8 +113,8 @@ public class VideoControllerA : MonoBehaviour
     void SetTotalTime()
     {
 
-        string minutes = Mathf.Floor((int) videoPlayer.clip.length / 60).ToString("00");
-        string seconds = ((int) videoPlayer.clip.length % 60).ToString("00");
+        string minutes = Mathf.Floor((int) (videoPlayer.frameCount / videoPlayer.frameRate) / 60).ToString("00");
+        string seconds = ((int) (videoPlayer.frameCount / videoPlayer.frameRate) % 60).ToString("00");
         
         TotalMinutes.text = minutes;
         TotalSeconds.text = seconds;
@@ -124,39 +135,60 @@ public class VideoControllerA : MonoBehaviour
     public void SetNextClip()
     {
         
-        if(videoClipIndex >= videoClips.Length)
+        // if(videoClipIndex >= videoClips.Length)
+        // {
+        //     videoClipIndex = videoClips.Length;
+        // }
+        // else
+        // {
+        //     videoClipIndex++;
+        // }
+        if(UrlClipIndex >= Url.Length)
         {
-            videoClipIndex = videoClips.Length;
+            UrlClipIndex = Url.Length;
         }
         else
         {
-            videoClipIndex++;
+            UrlClipIndex++;
         }
-        videoPlayer.clip = videoClips[videoClipIndex];
-        previewVideo.clip = videoClips[videoClipIndex];
+        videoPlayer.url = Url[UrlClipIndex];
+        previewVideo.url = Url[UrlClipIndex];
+        // videoPlayer.clip = videoClips[videoClipIndex];
+        // previewVideo.clip = videoClips[videoClipIndex];
         videoPlayer.Play();
-        Title.text = videoClips[videoClipIndex].name;
+        // Title.text = videoClips[videoClipIndex].name;
+        Title.text = videoPlayer.clip.name;
     }
     public void SetPreviousClip()
     {
-        if(videoClipIndex < 0)
+        // if(videoClipIndex < 0)
+        // {
+        //     videoClipIndex = 0;
+        // }else
+        // {
+        //     videoClipIndex--;
+        // }
+        if(UrlClipIndex < 0)
         {
-            videoClipIndex = 0;
+            UrlClipIndex = 0;
         }else
         {
-            videoClipIndex--;
+            UrlClipIndex--;
         }
-        videoPlayer.clip = videoClips[videoClipIndex];
-        previewVideo.clip = videoClips[videoClipIndex];
+        // videoPlayer.clip = videoClips[videoClipIndex];
+        // previewVideo.clip = videoClips[videoClipIndex];
+        videoPlayer.url = Url[UrlClipIndex];
+        previewVideo.url = Url[UrlClipIndex];
         videoPlayer.Play();
-        Title.text = videoClips[videoClipIndex].name;
+        // Title.text = videoClips[videoClipIndex].name;
+        Title.text = videoPlayer.clip.name;
         
     }
 
     public void SetProgressBar()
     {
-        progressBar.maxValue = (float) videoPlayer.clip.length;
-        progressBar.value = (float) videoPlayer.time;
+        progressBar.maxValue = (float) (videoPlayer.frameCount / videoPlayer.frameRate);
+        progressBar.value = (float) (videoPlayer.time);
     }
     public void SProgressBar()
     {
